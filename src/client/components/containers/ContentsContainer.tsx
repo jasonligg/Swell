@@ -4,6 +4,8 @@ import * as actions from '../../actions/actions';
 import BarGraph from "../display/BarGraph"
 import WorkspaceContainer from "./WorkspaceContainer.jsx";
 import CollectionsContainer from "./CollectionsContainer";
+import {Controlled as CodeMirror} from 'react-codemirror2';
+
 
 export const ContentsContainer = () => {
   // const [activeTab, setActiveTab] = useState('workspace');
@@ -11,8 +13,24 @@ export const ContentsContainer = () => {
   const activeTab = useSelector(store => store.ui.workspaceActiveTab);
   const currentResponse = useSelector(store => store.business.currentResponse);
   const setActiveTab = (tabName) => dispatch(actions.setWorkspaceActiveTab(tabName));
+  const [testInput, setTestInput] = useState("assert.strictEqual(3, '3', 'no coerscion')");
 
   const [showGraph, setShowGraph] = useState(false);
+
+  const click = async () => {
+    const {api} = window;
+    try{
+      console.log(testInput);
+      api.send('testFileSent', testInput)
+      api.receive('testResult', (result) => {
+        const res = JSON.parse(result);
+        console.log(res.message, '/\n', `Expect ${res.actual} to be ${res.expected}`)
+      })
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
 
   return (
     <div className="column is-one-third is-flex is-flex-direction-column is-tall is-divider-neutral-300" id='workspace'>
@@ -38,6 +56,24 @@ export const ContentsContainer = () => {
           </li>
         </ul>
       </div>
+      {/* <input style={{height: '100px'}} id="testInput" type="text"></input> */}
+      <CodeMirror
+      value={testInput}
+      onBeforeChange={(editor,data,value) => setTestInput(value)}
+        options={{
+          mode: {
+            name: "javascript",
+            json: true,
+          },
+          json: true,
+          lineNumbers: true,
+          tabSize: 4,
+          lineWrapping: true,
+          pollInterval: 2000,
+          readOnly: false,
+        }}
+      />
+      <button onClick={click}>Click</button>
       {/* WORKSPACE CONTENT */}
       <div className="is-flex-grow-3 add-vertical-scroll">
 
