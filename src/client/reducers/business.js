@@ -50,6 +50,9 @@ const initialState = {
     JSONFormatted: true,
     bodyIsNew: false,
   },
+  newTestBody: {
+    testContent: "",
+  },
   newRequestSSE: {
     isSSE: false,
   },
@@ -354,6 +357,13 @@ const businessReducer = (state = initialState, action) => {
       return {
         ...state,
         newRequestBody: action.payload,
+      };
+    }
+
+    case types.SET_NEW_TEST_BODY: {
+      return {
+        ...state,
+        newTestBody: action.payload,
       };
     }
 

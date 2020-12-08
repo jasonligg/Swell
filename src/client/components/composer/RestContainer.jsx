@@ -7,6 +7,11 @@ import CookieEntryForm from "./NewRequest/CookieEntryForm.jsx";
 import RestMethodAndEndpointEntryForm from "./NewRequest/RestMethodAndEndpointEntryForm.jsx";
 import NewRequestButton from './NewRequest/NewRequestButton.jsx'
 
+import TestEntryForm from "./NewRequest/TestEntryForm.jsx";
+
+import {UnControlled as CodeMirror} from 'react-codemirror2';
+
+import 'codemirror/mode/javascript/javascript';
 
 export default function RestContainer({
   resetComposerFields,
@@ -33,6 +38,8 @@ export default function RestContainer({
     bodyVariables,
     bodyType,
   },
+  setNewTestBody,
+  newTestBody: { testContent },
   setNewRequestHeaders,
   newRequestHeaders,
   newRequestHeaders: { headersArr },
@@ -85,7 +92,7 @@ export default function RestContainer({
     if (Object.keys(warnings).length > 0) {
       setComposerWarningMessage(warnings);
       return;
-    } 
+    }
 
     let reqRes;
     const protocol = url.match(/(https?:\/\/)|(wss?:\/\/)/)[0];
@@ -144,11 +151,11 @@ export default function RestContainer({
         tab: currentTab,
       };
     }
-    
+
     // add request to history
     historyController.addHistoryToIndexedDb(reqRes);
     reqResAdd(reqRes);
-    
+
     //reset for next request
     resetComposerFields();
     setWorkspaceActiveTab('workspace');
@@ -194,11 +201,11 @@ export default function RestContainer({
 
         {/* SSE TOGGLE SWITCH */}
         <div className="field mt-2">
-          <span className="composer-section-title mr-3">Server Sent Events</span>  
-            <input 
+          <span className="composer-section-title mr-3">Server Sent Events</span>
+            <input
               id="SSEswitch"
-              type="checkbox" 
-              className="switch is-outlined is-warning" 
+              type="checkbox"
+              className="switch is-outlined is-warning"
               onChange={(e) => {
                 handleSSEPayload(e);
               }}
@@ -206,6 +213,40 @@ export default function RestContainer({
              />
             <label htmlFor="SSEswitch" />
         </div>
+
+        <TestEntryForm
+            warningMessage={warningMessage}
+            newRequestBody={newRequestBody}
+            setNewRequestBody={setNewRequestBody}
+            newRequestHeaders={newRequestHeaders}
+            setNewRequestHeaders={setNewRequestHeaders}
+          />
+
+          //Initial REST:GET Testing area
+        <div className='is-neutral-200-box p-3 mt-1'>
+          <CodeMirror
+            value={""}
+            autoCursor={false}
+            options={{
+              mode: 'javascript',
+              theme: 'neo sidebar',
+              lineNumbers: true,
+              tabSize: 4,
+              lineWrapping: true,
+              pollInterval: 2000,
+              readOnly: false,
+            }}
+            onChange={(editor, data, value) => {
+              setNewTestBody({
+                testContent: value,
+              });
+            }}
+          />
+          <button onClick={() => console.log(newTestBody.testContent)}> Click me</button>
+        </div>
+
+
+
       </div>
       <div className="is-3rem-footer is-clickable is-margin-top-auto">
         <NewRequestButton onClick={addNewRequest} />

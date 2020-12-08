@@ -6,7 +6,7 @@ import RawBodyTypeSelect from "./RawBodyTypeSelect.jsx"
 import JSONPrettify from "./JSONPrettify.jsx"
 import TextCodeAreaEditable from "./TextCodeAreaEditable.jsx"
 
-const BodyEntryForm = (props) => {
+const TestEntryForm = (props) => {
   // const [show, toggleShow] = useState(true);
   const {
     newRequestBody,
@@ -101,4 +101,4 @@ const BodyEntryForm = (props) => {
   );
 };
 
-export default BodyEntryForm;
+export default TestEntryForm;

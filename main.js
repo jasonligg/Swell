@@ -641,3 +641,66 @@ ipcMain.on("introspect", (event, introspectionObject) => {
       )
     );
 });
+
+// const {assert, expect} = require('chai');
+const { NodeVM } = require('vm2');
+ 
+ipcMain.on('testFileSent', (event, args) => {
+  const vm = new NodeVM({
+    require: {
+      external: true,
+    }
+  });
+ 
+  // console.log(typeof args, args);
+ 
+  // this test will pass, so nothing will appear in the console
+  const testScriptPass = 
+  `
+  const { assert, expect } = require('chai');
+  try {
+    assert.strictEqual(3, 3, 'types do not match!')
+  } catch (err) {
+    console.log(err);
+  }
+  `
+  // this test will fail, will see assertion error in the console
+  const testScriptFail = 
+    `
+    const { assert, expect } = require('chai');
+    assert.strictEqual(3, '3', 'types do not match!')
+    // try {
+    //   assert.strictEqual(3, '3', 'types do not match!')
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    `
+  //  use passed in arguments
+  const testScript3 = 
+    `
+    const { assert, expect } = require('chai');
+    ${args}
+    // try {
+    //   ${args}
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    `
+ 
+  // console.log('ARGUMENTS: 649', args, '/\n');
+  // console.log('ASSERTION 650: ', assert.strictEqual(JSON.parse(args)))
+  try{
+    // let test = chaiParser(args);
+ 
+    // vm.run(testScriptPass, 'main.js'); // no error should be thrown
+    // vm.run(testScriptFail, 'main.js'); // error should be thrown
+    // vm.run(testScript3, 'main.js'); // error should be thrown
+    // console.log('TEST', test)
+    event.sender.send("testResult", JSON.stringify('Test passed'));
+  } 
+  catch (err) {
+    console.log('caught error!: in the catch block of main process', err)
+    // console.log('ERROR FROM MAIN: ', err) 
+    // event.sender.send("testResult", JSON.stringify(err));
+  }
+})
