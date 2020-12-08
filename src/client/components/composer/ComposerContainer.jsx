@@ -16,6 +16,7 @@ const mapStateToProps = (store) => ({
   newRequestHeaders: store.business.newRequestHeaders,
   newRequestStreams: store.business.newRequestStreams,
   newRequestBody: store.business.newRequestBody,
+  newTestBody: store.business.newTestBody,
   newRequestCookies: store.business.newRequestCookies,
   newRequestSSE: store.business.newRequestSSE,
   currentTab: store.business.currentTab,
@@ -44,6 +45,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   setNewRequestBody: (requestBodyObj) => {
     dispatch(actions.setNewRequestBody(requestBodyObj));
+  },
+  setNewTestBody: (testBodyObj) => {
+    dispatch(actions.setNewTestBody(testBodyObj));
   },
   setNewRequestCookies: (requestCookiesObj) => {
     dispatch(actions.setNewRequestCookies(requestCookiesObj));
@@ -109,6 +113,10 @@ const ComposerContainer = (props) => {
             ...props.newRequestBody,
             bodyType: "none",
             bodyContent: ``,
+          });
+          props.setNewTestBody({
+            ...props.newTestBody,
+            testContent: '',
           });
           break;
       }

@@ -102,6 +102,11 @@ export const setNewRequestBody = (body) => ({
   payload: body,
 });
 
+export const setNewTestBody = (body) => ({
+  type: types.SET_NEW_TEST_BODY,
+  payload: body,
+})
+
 export const setNewRequestCookies = (cookies) => ({
   type: types.SET_NEW_REQUEST_COOKIES,
   payload: cookies,
