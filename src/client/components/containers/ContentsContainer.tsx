@@ -16,16 +16,22 @@ export const ContentsContainer = () => {
   const [testInput, setTestInput] = useState("assert.strictEqual(3, '3', 'no coerscion')");
 
   const [showGraph, setShowGraph] = useState(false);
+  const {api} = window;
+
+  api.receive('testResult', (result) => {
+    const res = JSON.parse(result);
+    console.log(res);
+    if(!res) {
+      console.log('Test passed!')
+    } else {
+      console.log(res.message, '/\n', `Expect ${res.actual} to be ${res.expected}`)
+    }
+  })
 
   const click = async () => {
-    const {api} = window;
     try{
       console.log(testInput);
       api.send('testFileSent', testInput)
-      api.receive('testResult', (result) => {
-        const res = JSON.parse(result);
-        console.log(res.message, '/\n', `Expect ${res.actual} to be ${res.expected}`)
-      })
     }
     catch(e) {
       console.log(e);
