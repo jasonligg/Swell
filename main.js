@@ -641,3 +641,33 @@ ipcMain.on("introspect", (event, introspectionObject) => {
       )
     );
 });
+
+const {assert, expect} = require('chai');
+
+
+ipcMain.on('testFileSent', async (event, args) => {
+  console.log('ARGUMENTS: 649', args, '/\n');
+  // console.log('ASSERTION 650: ', assert.strictEqual(JSON.parse(args)))
+  try{
+    let test = chaiParser(args);
+    console.log('TEST', test)
+    if(!test) event.sender.send("testResult", JSON.stringify('Test passed'));
+  } 
+  catch(err) {
+    console.log('ERROR FROM MAIN: ', err)
+    event.sender.send("testResult", JSON.stringify(err));
+  }
+})
+
+const chaiParser = (string) => {
+  const func = new Function(string);
+  return(func());
+  // const chai = {'assert.strictEqual': assert.strictEqual, 'assert.typeOf': assert.typeOf}
+  // const array = string.split('(');
+  // let args = array[1];
+  // let newArgs = args.replace(')', '');
+  // newArgs = newArgs.split(',').map(e=> e.trim())
+  // newArgs = newArgs.map(e => e.replace(/\'/g, ''))
+  // console.log('FINAL ARGS: ', array, array[0], newArgs, '/\n');
+  // return chai[array[0]](...newArgs);
+}
