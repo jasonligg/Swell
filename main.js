@@ -642,32 +642,65 @@ ipcMain.on("introspect", (event, introspectionObject) => {
     );
 });
 
-const {assert, expect} = require('chai');
-
-
-ipcMain.on('testFileSent', async (event, args) => {
-  console.log('ARGUMENTS: 649', args, '/\n');
+// const {assert, expect} = require('chai');
+const { NodeVM } = require('vm2');
+ 
+ipcMain.on('testFileSent', (event, args) => {
+  const vm = new NodeVM({
+    require: {
+      external: true,
+    }
+  });
+ 
+  // console.log(typeof args, args);
+ 
+  // this test will pass, so nothing will appear in the console
+  const testScriptPass = 
+  `
+  const { assert, expect } = require('chai');
+  try {
+    assert.strictEqual(3, 3, 'types do not match!')
+  } catch (err) {
+    console.log(err);
+  }
+  `
+  // this test will fail, will see assertion error in the console
+  const testScriptFail = 
+    `
+    const { assert, expect } = require('chai');
+    assert.strictEqual(3, '3', 'types do not match!')
+    // try {
+    //   assert.strictEqual(3, '3', 'types do not match!')
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    `
+  //  use passed in arguments
+  const testScript3 = 
+    `
+    const { assert, expect } = require('chai');
+    ${args}
+    // try {
+    //   ${args}
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    `
+ 
+  // console.log('ARGUMENTS: 649', args, '/\n');
   // console.log('ASSERTION 650: ', assert.strictEqual(JSON.parse(args)))
   try{
-    let test = chaiParser(args);
-    console.log('TEST', test)
-    if(!test) event.sender.send("testResult", JSON.stringify('Test passed'));
+    // let test = chaiParser(args);
+ 
+    // vm.run(testScriptPass, 'main.js'); // no error should be thrown
+    // vm.run(testScriptFail, 'main.js'); // error should be thrown
+    // vm.run(testScript3, 'main.js'); // error should be thrown
+    // console.log('TEST', test)
+    event.sender.send("testResult", JSON.stringify('Test passed'));
   } 
-  catch(err) {
-    console.log('ERROR FROM MAIN: ', err)
-    event.sender.send("testResult", JSON.stringify(err));
+  catch (err) {
+    console.log('caught error!: in the catch block of main process', err)
+    // console.log('ERROR FROM MAIN: ', err) 
+    // event.sender.send("testResult", JSON.stringify(err));
   }
 })
-
-const chaiParser = (string) => {
-  const func = new Function(string);
-  return(func());
-  // const chai = {'assert.strictEqual': assert.strictEqual, 'assert.typeOf': assert.typeOf}
-  // const array = string.split('(');
-  // let args = array[1];
-  // let newArgs = args.replace(')', '');
-  // newArgs = newArgs.split(',').map(e=> e.trim())
-  // newArgs = newArgs.map(e => e.replace(/\'/g, ''))
-  // console.log('FINAL ARGS: ', array, array[0], newArgs, '/\n');
-  // return chai[array[0]](...newArgs);
-}
