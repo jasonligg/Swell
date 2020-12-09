@@ -13,7 +13,7 @@ export const ContentsContainer = () => {
   const activeTab = useSelector(store => store.ui.workspaceActiveTab);
   const currentResponse = useSelector(store => store.business.currentResponse);
   const setActiveTab = (tabName) => dispatch(actions.setWorkspaceActiveTab(tabName));
-  const [testInput, setTestInput] = useState("assert.strictEqual(3, '3', 'no coerscion')");
+  const [testInput, setTestInput] = useState("assert.strictEqual(3, '3', 'no coercion')");
 
   const [showGraph, setShowGraph] = useState(false);
   const {api} = window;
